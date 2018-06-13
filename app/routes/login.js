@@ -7,7 +7,9 @@ export default Route.extend({
         login(login, password) {
             this.get('bitgo').login(login, password)
                 .then(() => this.transitionTo('index'))
-                .catch(err => alert(err));
+                .catch(err => {
+                    this.controller.set('error', err);
+                });
         }
     }
 });
