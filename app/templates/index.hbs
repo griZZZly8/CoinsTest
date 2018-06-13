@@ -1,0 +1,6 @@
+index {{model.length}}
+
+{{#each model as |wallet|}}
+  {{#wallet-info wallet=wallet}}
+  {{/wallet-info}}
+{{/each}}
