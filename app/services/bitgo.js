@@ -18,7 +18,7 @@ export default Service.extend({
             })
         }).then(response => response.json()).then(json => {
             if (json.access_token) {
-                this.set('token', `Bearer ${json.access_token}`);
+                this.setToken(json.access_token);
             } else {
                 throw json.message;
             }
@@ -39,8 +39,27 @@ export default Service.extend({
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': this.get('token')
+                'Authorization': this.getToken()
             }
         }).then(this.checkAuth).then(response => response.json());
+    },
+
+    send(recipient, amount, passphrase) {
+        return fetch(this.get('url') + 'tbtc/wallet', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': this.getToken()
+            }
+        }).then(this.checkAuth).then(response => response.json());
+    },
+
+    setToken(value) {
+        localStorage.setItem('token', `Bearer ${value}`);
+    },
+
+    getToken() {
+        return localStorage.getItem('token');
     }
 });

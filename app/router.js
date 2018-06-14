@@ -6,9 +6,10 @@ const Router = EmberRouter.extend({
   rootURL: config.rootURL
 });
 
-Router.map(function() {
+Router.map(function () {
   this.route('index', { path: '/' });
   this.route('login');
+  this.route('send', { path: '/send/:wallet_id' });
 });
 
 export default Router;

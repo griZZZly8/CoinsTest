@@ -1,3 +1,10 @@
-{{#each model as |wallet|}}
-  {{wallet-info wallet=wallet}}
-{{/each}}
+<div class="col align-self-center">
+  <h1>Wallets</h1>
+  <ul class="list-group">
+    {{#each model as |wallet|}}
+    <li class="list-group-item">
+      {{wallet-info wallet=wallet}}
+    </li>
+    {{/each}}
+  </ul>
+</div>
