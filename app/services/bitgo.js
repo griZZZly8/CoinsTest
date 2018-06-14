@@ -44,14 +44,19 @@ export default Service.extend({
         }).then(this.checkAuth).then(response => response.json());
     },
 
-    send(recipient, amount, passphrase) {
-        return fetch(this.get('url') + 'tbtc/wallet', {
-            method: 'GET',
+    send(wallet, recipient, amount, passphrase) {
+        return fetch(this.get('url') + `${wallet.coin}/wallet/${wallet.id}/sendcoins`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'Authorization': this.getToken()
-            }
+            },
+            body: JSON.stringify({
+                amount: amount,
+                address: recipient,
+                walletPassphrase: passphrase
+            })
         }).then(this.checkAuth).then(response => response.json());
     },
 

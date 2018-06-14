@@ -9,8 +9,8 @@ export default Route.extend({
             .catch(() => this.transitionTo('login'));
     },
     actions: {
-        send(recipient, amount) {
-            this.get('bitgo').send(recipient, amount)
+        send(wallet, recipient, amount, passphrase) {
+            this.get('bitgo').send(wallet, recipient, amount, passphrase)
                 //.then(() => this.transitionTo('index'))
                 .catch(err => {
                     this.controller.set('error', err);
