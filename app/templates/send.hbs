@@ -21,7 +21,7 @@
 
   <div class="form-group">
     <label>Passphrase</label>
-    {{input class="form-control" placeholder="Passphrase" value=passphrase}}
+    {{input class="form-control" type="password" placeholder="Passphrase" value=passphrase}}
   </div>
 
   <button {{action "send" model recipient amount passphrase}} class="btn btn-primary">Send</button>

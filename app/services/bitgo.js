@@ -1,11 +1,11 @@
 import Service from '@ember/service';
 
 export default Service.extend({
-    url: 'https://test.bitgo.com/api/v2/',
+    url: 'http://localhost:3080/api/v2/',
     toket: null,
 
     login(email, password) {
-        return fetch(this.get('url') + 'user/login', {
+        return this._fetch('user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export default Service.extend({
             })
         }).then(response => response.json()).then(json => {
             if (json.access_token) {
-                this.setToken(json.access_token);
+                this._setToken(json.access_token);
             } else {
                 throw json.message;
             }
@@ -34,37 +34,70 @@ export default Service.extend({
     },
 
     wallets() {
-        return fetch(this.get('url') + 'tbtc/wallet', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': this.getToken()
-            }
-        }).then(this.checkAuth).then(response => response.json());
+        return this._fetch('tbtc/wallet')
+            .then(this.checkAuth)
+            .then(response => response.json())
+            .then(json => {
+                json.wallets.forEach(wallet => {
+                    wallet.balanceFormatted = wallet.balance / 1e8;
+                });
+                return json;
+            });
     },
 
     send(wallet, recipient, amount, passphrase) {
-        return fetch(this.get('url') + `${wallet.coin}/wallet/${wallet.id}/sendcoins`, {
+        return this.unlock().then(() => {
+            return this._fetch(`${wallet.coin}/wallet/${wallet.id}/sendcoins`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    amount: amount * 1e8,
+                    address: recipient,
+                    walletPassphrase: passphrase
+                })
+            }).then(response => response.json()).then(json => {
+                return this.lock().then(() => {
+                    if (json.error) {
+                        throw json.message;
+                    } else {
+                        return json;
+                    }
+                });
+            })
+        });
+    },
+
+    unlock() {
+        return this._fetch('user/unlock', {
             method: 'POST',
+            body: JSON.stringify({
+                otp: '000000'
+            })
+        });
+    },
+
+    lock() {
+        return this._fetch('user/lock', {
+            method: 'POST'
+        });
+    },
+
+    _fetch(url, data) {
+        const commonData = {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': this.getToken()
-            },
-            body: JSON.stringify({
-                amount: amount,
-                address: recipient,
-                walletPassphrase: passphrase
-            })
-        }).then(this.checkAuth).then(response => response.json());
+                'Authorization': this._getToken()
+            }
+        };
+
+        return fetch(this.get('url') + url, Object.assign(commonData, data));
     },
 
-    setToken(value) {
+    _setToken(value) {
         localStorage.setItem('token', `Bearer ${value}`);
     },
 
-    getToken() {
+    _getToken() {
         return localStorage.getItem('token');
     }
 });

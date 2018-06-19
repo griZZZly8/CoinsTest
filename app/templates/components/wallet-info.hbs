@@ -1,6 +1,6 @@
 <div>
     {{wallet.label}}
-    <span class="float-right">{{wallet.balance}} {{wallet.coin}}</span>
+    <span class="float-right">{{wallet.balanceFormatted}} {{wallet.coin}}</span>
 </div>
 <div>
     {{#link-to "send" wallet class="btn btn-outline-primary btn-sm"}}Send{{/link-to}}
