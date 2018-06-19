@@ -13,12 +13,15 @@
   "scripts": {
     "build": "ember build",
     "lint:js": "eslint ./*.js app blueprints config lib server tests",
-    "start": "ember serve",
+    "serve": "ember serve",
+    "start-bitgo": "node ./node_modules/bitgo/bin/bitgo-express",
+    "start": "concurrently --kill-others \"npm run serve\" \"npm run start-bitgo\"",
     "test": "ember test"
   },
   "devDependencies": {
     "bitgo": "griZZZly8/BitGoJS",
     "broccoli-asset-rev": "^2.4.5",
+    "concurrently": "^3.5.1",
     "ember-ajax": "^3.0.0",
     "ember-cli": "~3.1.4",
     "ember-cli-app-version": "^3.0.0",
